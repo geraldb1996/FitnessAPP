@@ -47,13 +47,11 @@ Gracias por el recordatorio existencial. 💔
 
 ### ⭐ Features (las que tiene… y las que me tocó inventar)
 
-- 📄 **Carga la rutina desde Google Sheets** como si fuera magia negra.  
-- 🔗 **Guarda tu link localmente**, porque repetirlo cada vez da pereza.  
-- 🎨 **Interfaz decente** (no preciosa, pero tampoco fea como mi primer prototipo).  
-- ⚡ **Actualización rápida** de datos sin tener que rearmar la app.  
-- 📱 **Funciona offline** si ya cargaste la rutina una vez.  
-- 🔒 **Sin cuentas, sin logins, sin lloradera**: abres, ves tu rutina y ya.  
-- 🧩 **Más funciones en camino**, cortesía del genio que preguntó “¿por qué no compartir la hoja y ya?”
+- 📄 **Cargar la rutina desde Google Sheets** a través de url a la hoja con plantilla.  
+- 🔗 **Guardar tu link localmente** (pendiente).  
+- 🎨 **Interfaz decente** (yep) 
+- 🔒 **Sin cuentas, sin logins, sin lloradera** abres, ves tu rutina y ya.  
+- 🧩 **Más funciones en camino** (Pendiente)
 
 </div>
 
