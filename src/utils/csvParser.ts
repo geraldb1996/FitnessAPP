@@ -21,7 +21,8 @@ export const parseRoutineCSV = (csvText: string): Routine => {
         'ejercicio': 'exercise',
         'series': 'sets',
         'repeticiones': 'reps',
-        'reps': 'reps', // Add support for 'reps'
+        'reps': 'reps',
+        'rep': 'reps', // Add support for 'Rep'
         'descanso': 'rest',
         'notas': 'notes',
     };
