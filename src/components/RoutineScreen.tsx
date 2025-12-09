@@ -12,13 +12,24 @@ export const RoutineScreen = () => {
     const [error, setError] = useState('');
     const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
+    const convertToCsvUrl = (url: string): string | null => {
+        const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        if (match && match[1]) {
+            return `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv`;
+        }
+        return null;
+    };
+
     const handleFetch = async () => {
         setLoading(true);
         setError('');
         try {
+            const csvUrl = convertToCsvUrl(url);
+            if (!csvUrl) {
+                throw new Error('El enlace no es válido. Asegúrate de usar un link de Google Sheets.');
+            }
 
-
-            const response = await fetch(url);
+            const response = await fetch(csvUrl);
             const text = await response.text();
             const data = parseRoutineCSV(text);
             setRoutine(data);
