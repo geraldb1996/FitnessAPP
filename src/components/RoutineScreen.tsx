@@ -3,9 +3,13 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Activi
 import { parseRoutineCSV, Routine } from '../utils/csvParser';
 import { DayDetailScreen } from './DayDetailScreen';
 import { theme } from '../theme/theme';
-import { Dumbbell, Calendar, ChevronRight, Download } from 'lucide-react-native';
+import { Dumbbell, Calendar, ChevronRight, Download, ArrowLeft } from 'lucide-react-native';
 
-export const RoutineScreen = () => {
+interface RoutineScreenProps {
+    onBack: () => void;
+}
+
+export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onBack }) => {
     const [url, setUrl] = useState('');
     const [routine, setRoutine] = useState<Routine | null>(null);
     const [loading, setLoading] = useState(false);
@@ -54,6 +58,9 @@ export const RoutineScreen = () => {
         <View style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
             <View style={styles.header}>
+                <TouchableOpacity onPress={onBack} style={styles.backButton}>
+                    <ArrowLeft size={24} color={theme.colors.text} />
+                </TouchableOpacity>
                 <View style={styles.titleContainer}>
                     <Dumbbell size={32} color={theme.colors.primary} />
                     <Text style={styles.title}>Fitness App</Text>
@@ -127,6 +134,9 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.surface,
         borderBottomLeftRadius: theme.borderRadius.l,
         borderBottomRightRadius: theme.borderRadius.l,
+        marginBottom: theme.spacing.m,
+    },
+    backButton: {
         marginBottom: theme.spacing.m,
     },
     titleContainer: {
