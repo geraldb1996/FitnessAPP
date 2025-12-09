@@ -1,4 +1,4 @@
-<!-- HEADER --> <div align="center"> <img src="https://c.tenor.com/NwY5ppxLs_oAAAAd/kitten-keybo.gif" width="110" /> <h1>Fitness Sheets App 🏋️‍♂️📄</h1>
+<!-- HEADER --> <div align="center"> <img src="https://i.imgur.com/FmgdXpt.gif" width="110" /> <h1>Fitness Sheets App 🏋️‍♂️📄</h1>
 
 <strong>Porque sí, es básicamente Google Sheets… pero la hice porque puedo.</strong>
 
