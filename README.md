@@ -48,7 +48,7 @@ Gracias por el recordatorio existencial. 💔
 ### ⭐ Features (las que tiene… y las que me tocó inventar)
 
 - 📄 **Cargar la rutina desde Google Sheets** a través de url a la hoja con plantilla.  
-- 🔗 **Guardar tu link localmente** (pendiente).  
+- 🔗 **Guardar tu link localmente** se guardan los links y puedes agregar más rutinas.  
 - 🎨 **Interfaz decente** (yep) 
 - 🔒 **Sin cuentas, sin logins, sin lloradera** abres, ves tu rutina y ya.  
 - 🧩 **Más funciones en camino** (Pendiente)

@@ -9,6 +9,7 @@ export const theme = {
         border: '#2A2A2A',
         success: '#10B981',
         error: '#EF4444',
+        warning: '#F59E0B', // Amber 500
     },
     spacing: {
         xs: 4,
