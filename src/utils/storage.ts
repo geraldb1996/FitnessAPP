@@ -127,3 +127,16 @@ export const deleteStatCategory = async (id: string): Promise<void> => {
         throw e;
     }
 };
+
+export const updateStatCategory = async (updatedCategory: StatCategory): Promise<void> => {
+    try {
+        const existing = await getStatCategories();
+        const newCategories = existing.map(c =>
+            c.id === updatedCategory.id ? updatedCategory : c
+        );
+        await AsyncStorage.setItem(STATS_KEY, JSON.stringify(newCategories));
+    } catch (e) {
+        console.error('Error updating stat category', e);
+        throw e;
+    }
+};

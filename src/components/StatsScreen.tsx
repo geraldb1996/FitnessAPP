@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, StatusBar, TextInput, Alert, Modal } from 'react-native';
 import { theme } from '../theme/theme';
-import { ArrowLeft, Plus, Activity, Trash2, ChevronRight } from 'lucide-react-native';
-import { getStatCategories, saveStatCategory, deleteStatCategory, StatCategory } from '../utils/storage';
+import { ArrowLeft, Plus, Activity, Trash2, ChevronRight, Edit2 } from 'lucide-react-native';
+import { getStatCategories, saveStatCategory, deleteStatCategory, updateStatCategory, StatCategory } from '../utils/storage';
 
 interface StatsScreenProps {
     onBack: () => void;
@@ -15,6 +15,7 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
     const [newName, setNewName] = useState('');
     const [newUnit, setNewUnit] = useState('');
     const [initialValue, setInitialValue] = useState('');
+    const [editingId, setEditingId] = useState<string | null>(null);
 
     useEffect(() => {
         loadCategories();
@@ -26,38 +27,64 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
     };
 
     const handleAddCategory = async () => {
-        if (!newName || !newUnit || !initialValue) {
-            Alert.alert('Error', 'Por favor completa todos los campos.');
+        if (!newName || !newUnit) {
+            Alert.alert('Error', 'Por favor completa el nombre y la unidad.');
             return;
         }
 
-        const value = parseFloat(initialValue);
-        if (isNaN(value)) {
-            Alert.alert('Error', 'El valor inicial debe ser un número.');
+        if (!editingId && !initialValue) {
+            Alert.alert('Error', 'Por favor ingresa un valor inicial.');
             return;
         }
 
         try {
-            const newCategory: StatCategory = {
-                id: Date.now().toString(),
-                name: newName,
-                unit: newUnit,
-                entries: [
-                    {
-                        date: new Date().toISOString(),
-                        value: value,
-                    },
-                ],
-            };
-            await saveStatCategory(newCategory);
+            if (editingId) {
+                const categoryToUpdate = categories.find(c => c.id === editingId);
+                if (categoryToUpdate) {
+                    const updatedCategory: StatCategory = {
+                        ...categoryToUpdate,
+                        name: newName,
+                        unit: newUnit,
+                    };
+                    await updateStatCategory(updatedCategory);
+                }
+            } else {
+                const value = parseFloat(initialValue);
+                if (isNaN(value)) {
+                    Alert.alert('Error', 'El valor inicial debe ser un número.');
+                    return;
+                }
+
+                const newCategory: StatCategory = {
+                    id: Date.now().toString(),
+                    name: newName,
+                    unit: newUnit,
+                    entries: [
+                        {
+                            date: new Date().toISOString(),
+                            value: value,
+                        },
+                    ],
+                };
+                await saveStatCategory(newCategory);
+            }
+
             setNewName('');
             setNewUnit('');
             setInitialValue('');
+            setEditingId(null);
             setIsModalVisible(false);
             loadCategories();
         } catch (error) {
-            Alert.alert('Error', 'No se pudo crear la categoría.');
+            Alert.alert('Error', 'No se pudo guardar la categoría.');
         }
+    };
+
+    const handleEdit = (category: StatCategory) => {
+        setNewName(category.name);
+        setNewUnit(category.unit);
+        setEditingId(category.id);
+        setIsModalVisible(true);
     };
 
     const handleDelete = async (id: string) => {
@@ -92,7 +119,16 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
-                <TouchableOpacity style={styles.addButton} onPress={() => setIsModalVisible(true)}>
+                <TouchableOpacity
+                    style={styles.addButton}
+                    onPress={() => {
+                        setEditingId(null);
+                        setNewName('');
+                        setNewUnit('');
+                        setInitialValue('');
+                        setIsModalVisible(true);
+                    }}
+                >
                     <Plus size={24} color="#FFF" />
                     <Text style={styles.addButtonText}>Agregar Nueva Categoría</Text>
                 </TouchableOpacity>
@@ -117,6 +153,12 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
                                 </Text>
                             </View>
                             <TouchableOpacity
+                                style={styles.editButton}
+                                onPress={() => handleEdit(category)}
+                            >
+                                <Edit2 size={20} color={theme.colors.primary} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
                                 style={styles.deleteButton}
                                 onPress={() => handleDelete(category.id)}
                             >
@@ -136,7 +178,7 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Nueva Categoría</Text>
+                        <Text style={styles.modalTitle}>{editingId ? 'Editar Categoría' : 'Nueva Categoría'}</Text>
 
                         <Text style={styles.label}>Nombre (ej. Peso Corporal)</Text>
                         <TextInput
@@ -156,15 +198,19 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
                             placeholderTextColor={theme.colors.textSecondary}
                         />
 
-                        <Text style={styles.label}>Valor Inicial</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={initialValue}
-                            onChangeText={setInitialValue}
-                            placeholder="0.0"
-                            placeholderTextColor={theme.colors.textSecondary}
-                            keyboardType="numeric"
-                        />
+                        {!editingId && (
+                            <>
+                                <Text style={styles.label}>Valor Inicial</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={initialValue}
+                                    onChangeText={setInitialValue}
+                                    placeholder="0.0"
+                                    placeholderTextColor={theme.colors.textSecondary}
+                                    keyboardType="numeric"
+                                />
+                            </>
+                        )}
 
                         <View style={styles.modalButtons}>
                             <TouchableOpacity
@@ -174,7 +220,7 @@ export const StatsScreen: React.FC<StatsScreenProps> = ({ onBack, onCategorySele
                                 <Text style={styles.cancelText}>Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.saveButton} onPress={handleAddCategory}>
-                                <Text style={styles.saveText}>Crear</Text>
+                                <Text style={styles.saveText}>{editingId ? 'Actualizar' : 'Crear'}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -262,6 +308,10 @@ const styles = StyleSheet.create({
     cardSubtitle: {
         ...theme.typography.caption,
         color: theme.colors.textSecondary,
+    },
+    editButton: {
+        padding: theme.spacing.s,
+        marginRight: theme.spacing.xs,
     },
     deleteButton: {
         padding: theme.spacing.s,
