@@ -1,47 +1,55 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, ScrollView } from 'react-native';
 import { theme } from '../theme/theme';
-import { Dumbbell, ChevronRight } from 'lucide-react-native';
+import { Dumbbell, ChevronRight, Activity } from 'lucide-react-native';
 
 interface HomeScreenProps {
     onNavigateToRoutine: () => void;
+    onNavigateToStats: () => void;
 }
 
-export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine }) => {
+export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onNavigateToStats }) => {
     return (
         <View style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
             <View style={styles.header}>
-                <View style={styles.titleContainer}>
-                    <Dumbbell size={32} color={theme.colors.primary} />
-                    <Text style={styles.title}>Fitness App</Text>
-                </View>
-                <Text style={styles.subtitle}>Bienvenido a tu entrenador personal</Text>
+                <Text style={styles.title}>Fitness App</Text>
+                <Text style={styles.subtitle}>Bienvenido de nuevo</Text>
             </View>
 
-            <View style={styles.menuContainer}>
+            <ScrollView contentContainerStyle={styles.content}>
+                <Text style={styles.sectionTitle}>Menú Principal</Text>
+
                 <TouchableOpacity
                     style={styles.menuItem}
                     onPress={onNavigateToRoutine}
                     activeOpacity={0.7}
                 >
                     <View style={styles.iconContainer}>
-                        <Dumbbell size={24} color={theme.colors.primary} />
+                        <Dumbbell size={32} color={theme.colors.primary} />
                     </View>
-                    <View style={styles.textContainer}>
+                    <View style={styles.menuTextContainer}>
                         <Text style={styles.menuTitle}>Rutina</Text>
-                        <Text style={styles.menuSubtitle}>Carga y visualiza tu plan de entrenamiento</Text>
+                        <Text style={styles.menuSubtitle}>Gestiona tus entrenamientos</Text>
                     </View>
                     <ChevronRight size={24} color={theme.colors.textSecondary} />
                 </TouchableOpacity>
 
-                {/* Placeholder for future options */}
-                {/* 
-                <TouchableOpacity style={styles.menuItem}>
-                    ...
-                </TouchableOpacity> 
-                */}
-            </View>
+                <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={onNavigateToStats}
+                    activeOpacity={0.7}
+                >
+                    <View style={styles.iconContainer}>
+                        <Activity size={32} color={theme.colors.primary} />
+                    </View>
+                    <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuTitle}>Mis Estadísticas</Text>
+                        <Text style={styles.menuSubtitle}>Sigue tu progreso</Text>
+                    </View>
+                    <ChevronRight size={24} color={theme.colors.textSecondary} />
+                </TouchableOpacity>
+            </ScrollView>
         </View>
     );
 };
@@ -72,9 +80,13 @@ const styles = StyleSheet.create({
         ...theme.typography.body,
         color: theme.colors.textSecondary,
     },
-    menuContainer: {
-        paddingHorizontal: theme.spacing.l,
+    content: {
+        padding: theme.spacing.l,
     },
+    sectionTitle: {
+        ...theme.typography.h2,
+        marginBottom: theme.spacing.m,
+    } as any,
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -94,7 +106,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: theme.spacing.m,
     },
-    textContainer: {
+    menuTextContainer: {
         flex: 1,
     },
     menuTitle: {
@@ -103,5 +115,6 @@ const styles = StyleSheet.create({
     } as any,
     menuSubtitle: {
         ...theme.typography.caption,
+        color: theme.colors.textSecondary,
     },
 });
