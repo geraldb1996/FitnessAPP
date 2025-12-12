@@ -19,12 +19,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onN
         <View style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
             <View style={styles.header}>
-                <Text style={styles.title}>Fitness App</Text>
-                <Text style={styles.subtitle}>Bienvenido de nuevo</Text>
+                <Text style={styles.title}>FITO</Text>
+                <Text style={styles.subtitle}>Fit in Online</Text>
             </View>
 
-            <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.sectionTitle}>Menú Principal</Text>
+            <ScrollView contentContainerStyle={styles.content} style={styles.scrollView}>
+                <Text style={styles.sectionTitle}>Opciones</Text>
 
                 <TouchableOpacity
                     style={styles.menuItem}
@@ -71,6 +71,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onN
                     <ChevronRight size={24} color={theme.colors.textSecondary} />
                 </TouchableOpacity>
             </ScrollView>
+
+            <View style={styles.footer}>
+                <Text style={styles.footerText}>Developed by GeraldGlitch</Text>
+            </View>
 
             <Modal
                 visible={isModalVisible}
@@ -206,5 +210,19 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    scrollView: {
+        flex: 1,
+    },
+    footer: {
+        padding: theme.spacing.m,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: theme.colors.background,
+    },
+    footerText: {
+        ...theme.typography.caption,
+        color: theme.colors.textSecondary,
+        fontSize: 12,
     },
 });
