@@ -67,7 +67,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onBack, onRoutineS
     const handleDelete = async (id: string) => {
         Alert.alert(
             'Eliminar Rutina',
-            '¿Estás seguro de que quieres eliminar esta rutina?',
+            '¿Estás seguro de eliminar esta rutina?',
             [
                 { text: 'Cancelar', style: 'cancel' },
                 {
@@ -140,7 +140,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onBack, onRoutineS
                     </TouchableOpacity>
                 )}
 
-                <Text style={styles.sectionTitle}>Routines Guardadas</Text>
+                <Text style={styles.sectionTitle}>Rutinas Guardadas</Text>
 
                 {routines.length === 0 ? (
                     <Text style={styles.emptyText}>No tienes rutinas guardadas.</Text>
