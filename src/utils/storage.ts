@@ -34,10 +34,21 @@ export const saveRoutine = async (routine: SavedRoutine): Promise<void> => {
     }
 };
 
+const DEFAULT_ROUTINE: SavedRoutine = {
+    id: 'default-routine-gerald',
+    name: 'Rutina de Gerald',
+    url: 'https://docs.google.com/spreadsheets/d/147XEobw-yqz4Z0H2_iuO6CU8l4_wcKhhoc8wqvt3j8E/edit?usp=sharing'
+};
+
 export const getRoutines = async (): Promise<SavedRoutine[]> => {
     try {
         const jsonValue = await AsyncStorage.getItem(ROUTINES_KEY);
-        return jsonValue != null ? JSON.parse(jsonValue) : [];
+        if (jsonValue === null) {
+            const initialRoutines = [DEFAULT_ROUTINE];
+            await AsyncStorage.setItem(ROUTINES_KEY, JSON.stringify(initialRoutines));
+            return initialRoutines;
+        }
+        return JSON.parse(jsonValue);
     } catch (e) {
         console.error('Error reading routines', e);
         return [];
