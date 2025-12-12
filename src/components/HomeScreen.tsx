@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, ScrollView, Modal, Linking } from 'react-native';
 import { theme } from '../theme/theme';
-import { Dumbbell, ChevronRight, Activity } from 'lucide-react-native';
+import { Dumbbell, ChevronRight, Activity, FilePlus, X } from 'lucide-react-native';
 
 interface HomeScreenProps {
     onNavigateToRoutine: () => void;
@@ -9,6 +9,12 @@ interface HomeScreenProps {
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onNavigateToStats }) => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const openTemplate = () => {
+        Linking.openURL('https://docs.google.com/spreadsheets/d/1Kqf4nJDMJQMHJRDhwJlu0A9KCsK2q2mLgA98FznBN2w/copy?usp=sharing');
+    };
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor={theme.colors.background} />
@@ -49,7 +55,52 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onN
                     </View>
                     <ChevronRight size={24} color={theme.colors.textSecondary} />
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => setIsModalVisible(true)}
+                    activeOpacity={0.7}
+                >
+                    <View style={styles.iconContainer}>
+                        <FilePlus size={32} color={theme.colors.primary} />
+                    </View>
+                    <View style={styles.menuTextContainer}>
+                        <Text style={styles.menuTitle}>Crea tu propia rutina</Text>
+                        <Text style={styles.menuSubtitle}>Instrucciones y plantilla</Text>
+                    </View>
+                    <ChevronRight size={24} color={theme.colors.textSecondary} />
+                </TouchableOpacity>
             </ScrollView>
+
+            <Modal
+                visible={isModalVisible}
+                transparent
+                animationType="slide"
+                onRequestClose={() => setIsModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Crea tu propia rutina</Text>
+                            <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                                <X size={24} color={theme.colors.text} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.instructionsContainer}>
+                            <Text style={styles.instructionItem}>1. Presiona "Plantilla" para abrir el documento.</Text>
+                            <Text style={styles.instructionItem}>2. Crea una copia en tu Google Drive.</Text>
+                            <Text style={styles.instructionItem}>3. Edita la hoja con tus ejercicios.</Text>
+                            <Text style={styles.instructionItem}>4. Copia el enlace de la hoja (asegúrate que sea público/visible).</Text>
+                            <Text style={styles.instructionItem}>5. Ve a "Rutinas Semanales" y agrega el enlace.</Text>
+                        </View>
+
+                        <TouchableOpacity style={styles.templateButton} onPress={openTemplate}>
+                            <Text style={styles.templateButtonText}>Plantilla</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -116,5 +167,44 @@ const styles = StyleSheet.create({
     menuSubtitle: {
         ...theme.typography.caption,
         color: theme.colors.textSecondary,
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        padding: theme.spacing.l,
+    },
+    modalContent: {
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.borderRadius.l,
+        padding: theme.spacing.l,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: theme.spacing.l,
+    },
+    modalTitle: {
+        ...theme.typography.h2,
+    } as any,
+    instructionsContainer: {
+        marginBottom: theme.spacing.xl,
+    },
+    instructionItem: {
+        ...theme.typography.body,
+        marginBottom: theme.spacing.s,
+        color: theme.colors.text,
+    },
+    templateButton: {
+        backgroundColor: theme.colors.primary,
+        padding: theme.spacing.m,
+        borderRadius: theme.borderRadius.m,
+        alignItems: 'center',
+    },
+    templateButtonText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
 });
