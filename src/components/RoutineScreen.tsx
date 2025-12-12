@@ -101,7 +101,7 @@ export const RoutineScreen: React.FC<RoutineScreenProps> = ({ onBack, onRoutineS
                         <Text style={styles.addTitle}>{editingId ? 'Editar Rutina' : 'Nueva Rutina'}</Text>
                         <TextInput
                             style={styles.input}
-                            placeholder="Nombre de la rutina (ej. Hipertrofia)"
+                            placeholder="Nombre de la rutina (ej. Rutina de Juanito)"
                             placeholderTextColor={theme.colors.textSecondary}
                             value={newName}
                             onChangeText={setNewName}

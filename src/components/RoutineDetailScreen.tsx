@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator
 import { parseRoutineCSV, Routine } from '../utils/csvParser';
 import { DayDetailScreen } from './DayDetailScreen';
 import { theme } from '../theme/theme';
-import { Calendar, ChevronRight, ArrowLeft } from 'lucide-react-native';
+import { Calendar, ChevronRight, ArrowLeft, RefreshCw } from 'lucide-react-native';
 import { getRoutine, updateRoutine } from '../utils/storage';
 
 interface RoutineDetailScreenProps {
@@ -26,52 +26,52 @@ export const RoutineDetailScreen: React.FC<RoutineDetailScreenProps> = ({ routin
         return null;
     };
 
-    useEffect(() => {
-        const fetchRoutine = async () => {
-            setLoading(true);
-            setError('');
-            setIsOffline(false);
+    const loadRoutineData = async () => {
+        setLoading(true);
+        setError('');
+        setIsOffline(false);
+
+        try {
+            const savedRoutine = await getRoutine(routineId);
+            if (!savedRoutine) {
+                throw new Error('Rutina no encontrada.');
+            }
+
+            const csvUrl = convertToCsvUrl(savedRoutine.url);
+            if (!csvUrl) {
+                throw new Error('El enlace no es válido.');
+            }
 
             try {
-                const savedRoutine = await getRoutine(routineId);
-                if (!savedRoutine) {
-                    throw new Error('Rutina no encontrada.');
-                }
+                const response = await fetch(csvUrl);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const text = await response.text();
+                const data = parseRoutineCSV(text);
+                setRoutine(data);
 
-                const csvUrl = convertToCsvUrl(savedRoutine.url);
-                if (!csvUrl) {
-                    throw new Error('El enlace no es válido.');
+                // Update cache
+                await updateRoutine({
+                    ...savedRoutine,
+                    lastKnownData: data
+                });
+            } catch (networkError) {
+                console.log('Network error, trying cache', networkError);
+                if (savedRoutine.lastKnownData) {
+                    setRoutine(savedRoutine.lastKnownData);
+                    setIsOffline(true);
+                } else {
+                    throw new Error('No se pudo cargar la rutina y no hay datos guardados.');
                 }
-
-                try {
-                    const response = await fetch(csvUrl);
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const text = await response.text();
-                    const data = parseRoutineCSV(text);
-                    setRoutine(data);
-
-                    // Update cache
-                    await updateRoutine({
-                        ...savedRoutine,
-                        lastKnownData: data
-                    });
-                } catch (networkError) {
-                    console.log('Network error, trying cache', networkError);
-                    if (savedRoutine.lastKnownData) {
-                        setRoutine(savedRoutine.lastKnownData);
-                        setIsOffline(true);
-                    } else {
-                        throw new Error('No se pudo cargar la rutina y no hay datos guardados.');
-                    }
-                }
-            } catch (err: any) {
-                setError(err.message || 'Error al cargar la rutina.');
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (err: any) {
+            setError(err.message || 'Error al cargar la rutina.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchRoutine();
+    useEffect(() => {
+        loadRoutineData();
     }, [routineId]);
 
     if (selectedDay && routine) {
@@ -91,13 +91,22 @@ export const RoutineDetailScreen: React.FC<RoutineDetailScreenProps> = ({ routin
                 <TouchableOpacity onPress={onBack} style={styles.backButton}>
                     <ArrowLeft size={24} color={theme.colors.text} />
                 </TouchableOpacity>
-                <View>
-                    <Text style={styles.title}>Tu Rutina</Text>
-                    {isOffline && <Text style={styles.offlineText}>Modo Offline</Text>}
+                <View style={styles.titleContainer}>
+                    <View>
+                        <Text style={styles.title}>Tu Rutina</Text>
+                        {isOffline && <Text style={styles.offlineText}>Estás sin internet</Text>}
+                    </View>
+                    <TouchableOpacity onPress={loadRoutineData} disabled={loading} style={styles.reloadButton}>
+                        {loading ? (
+                            <ActivityIndicator size="small" color={theme.colors.primary} />
+                        ) : (
+                            <RefreshCw size={20} color={theme.colors.primary} />
+                        )}
+                    </TouchableOpacity>
                 </View>
             </View>
 
-            {loading ? (
+            {loading && !routine ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={theme.colors.primary} />
                     <Text style={styles.loadingText}>Cargando rutina...</Text>
@@ -154,6 +163,15 @@ const styles = StyleSheet.create({
     title: {
         ...theme.typography.h2,
     } as any,
+    titleContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    reloadButton: {
+        padding: theme.spacing.s,
+    },
     offlineText: {
         ...theme.typography.caption,
         color: theme.colors.warning,
