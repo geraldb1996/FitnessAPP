@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet, BackHandler } from 'react-native';
 import { HomeScreen } from './src/components/HomeScreen';
 import { RoutineScreen } from './src/components/RoutineScreen';
 import { RoutineDetailScreen } from './src/components/RoutineDetailScreen';
@@ -14,6 +14,36 @@ const App = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('Home');
   const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<StatCategory | null>(null);
+
+  useEffect(() => {
+    const backAction = () => {
+      switch (currentScreen) {
+        case 'Home':
+          return false; // Let default behavior happen (exit app)
+        case 'RoutineManager':
+          setCurrentScreen('Home');
+          return true;
+        case 'RoutineDetail':
+          setCurrentScreen('RoutineManager');
+          return true;
+        case 'StatsManager':
+          setCurrentScreen('Home');
+          return true;
+        case 'StatDetail':
+          setCurrentScreen('StatsManager');
+          return true;
+        default:
+          return false;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [currentScreen]);
 
   const handleNavigateToRoutine = (id: string) => {
     setSelectedRoutineId(id);
