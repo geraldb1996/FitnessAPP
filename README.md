@@ -17,7 +17,7 @@ Permite a instructores de gimnasio e influencers fitness compartir rutinas usand
 Sí, otra excusa para no aprender a usar una base de datos.
 
 👉 Plantilla oficial:  
-<code>https://docs.google.com/spreadsheets/d/1Kqf4nJDMJQMHJRDhwJlu0A9KCsK2q2mLgA98FznBN2w/edit?usp=sharing</code>
+<code>https://docs.google.com/spreadsheets/d/1Kqf4nJDMJQMHJRDhwJlu0A9KCsK2q2mLgA98FznBN2w/copy?usp=sharing</code>
 
 ⚠️ Ponla en pública solo lectura para poder acceder a los datos.
 

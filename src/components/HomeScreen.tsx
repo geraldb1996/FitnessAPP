@@ -29,8 +29,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onN
                         <Dumbbell size={32} color={theme.colors.primary} />
                     </View>
                     <View style={styles.menuTextContainer}>
-                        <Text style={styles.menuTitle}>Rutina</Text>
-                        <Text style={styles.menuSubtitle}>Gestiona tus entrenamientos</Text>
+                        <Text style={styles.menuTitle}>Rutinas Semanales</Text>
+                        <Text style={styles.menuSubtitle}>Administra rutinas agregadas desde GoogleSheets</Text>
                     </View>
                     <ChevronRight size={24} color={theme.colors.textSecondary} />
                 </TouchableOpacity>
@@ -45,7 +45,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigateToRoutine, onN
                     </View>
                     <View style={styles.menuTextContainer}>
                         <Text style={styles.menuTitle}>Mis Estadísticas</Text>
-                        <Text style={styles.menuSubtitle}>Sigue tu progreso</Text>
+                        <Text style={styles.menuSubtitle}>Para checar tu progreso</Text>
                     </View>
                     <ChevronRight size={24} color={theme.colors.textSecondary} />
                 </TouchableOpacity>

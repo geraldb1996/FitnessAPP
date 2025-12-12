@@ -12,6 +12,7 @@ interface StatDetailScreenProps {
 }
 
 export const StatDetailScreen: React.FC<StatDetailScreenProps> = ({ category, onBack, onUpdate }) => {
+    const [currentCategory, setCurrentCategory] = useState<StatCategory>(category);
     const [newValue, setNewValue] = useState('');
 
     const handleAddEntry = async () => {
@@ -21,11 +22,21 @@ export const StatDetailScreen: React.FC<StatDetailScreenProps> = ({ category, on
             return;
         }
 
+        const newEntry = {
+            date: new Date().toISOString(),
+            value: value,
+        };
+
         try {
-            await addStatEntry(category.id, {
-                date: new Date().toISOString(),
-                value: value,
-            });
+            await addStatEntry(currentCategory.id, newEntry);
+
+            // Update local state immediately
+            const updatedCategory = {
+                ...currentCategory,
+                entries: [...currentCategory.entries, newEntry]
+            };
+            setCurrentCategory(updatedCategory);
+
             setNewValue('');
             onUpdate(); // Refresh parent data
         } catch (error) {
@@ -35,13 +46,13 @@ export const StatDetailScreen: React.FC<StatDetailScreenProps> = ({ category, on
 
     // Prepare chart data
     const chartData = {
-        labels: category.entries.slice(-6).map(e => {
+        labels: currentCategory.entries.slice(-6).map(e => {
             const date = new Date(e.date);
             return `${date.getDate()}/${date.getMonth() + 1}`;
         }),
         datasets: [
             {
-                data: category.entries.slice(-6).map(e => e.value),
+                data: currentCategory.entries.slice(-6).map(e => e.value),
             },
         ],
     };
@@ -54,7 +65,7 @@ export const StatDetailScreen: React.FC<StatDetailScreenProps> = ({ category, on
                     <ArrowLeft size={24} color={theme.colors.text} />
                 </TouchableOpacity>
                 <View>
-                    <Text style={styles.title}>{category.name}</Text>
+                    <Text style={styles.title}>{currentCategory.name}</Text>
                     <Text style={styles.subtitle}>Historial de progreso</Text>
                 </View>
             </View>
@@ -90,7 +101,7 @@ export const StatDetailScreen: React.FC<StatDetailScreenProps> = ({ category, on
                 </View>
 
                 <View style={styles.inputContainer}>
-                    <Text style={styles.inputLabel}>Nuevo Registro ({category.unit})</Text>
+                    <Text style={styles.inputLabel}>Nuevo Registro ({currentCategory.unit})</Text>
                     <View style={styles.inputRow}>
                         <TextInput
                             style={styles.input}
@@ -107,13 +118,13 @@ export const StatDetailScreen: React.FC<StatDetailScreenProps> = ({ category, on
                 </View>
 
                 <Text style={styles.historyTitle}>Historial</Text>
-                {category.entries.slice().reverse().map((entry, index) => (
+                {currentCategory.entries.slice().reverse().map((entry, index) => (
                     <View key={index} style={styles.historyItem}>
                         <Text style={styles.historyDate}>
                             {new Date(entry.date).toLocaleDateString()} {new Date(entry.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </Text>
                         <Text style={styles.historyValue}>
-                            {entry.value} {category.unit}
+                            {entry.value} {currentCategory.unit}
                         </Text>
                     </View>
                 ))}
